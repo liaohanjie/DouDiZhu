@@ -159,6 +159,7 @@
     <Compile Include="Assets\Logic\Scriptes\logic\debug\GameLog.cs" />
     <Compile Include="Assets\Logic\Scriptes\logic\game\CardsManager.cs" />
     <Compile Include="Assets\Logic\Scriptes\logic\game\IPlayerGame.cs" />
+    <Compile Include="Assets\Logic\Scriptes\logic\game\Model\Player.cs" />
     <Compile Include="Assets\Logic\Scriptes\logic\game\impl\PlayerDouDiZhuGame.cs" />
     <Compile Include="Assets\Logic\Scriptes\logic\main\StartController.cs" />
     <Compile Include="Assets\Logic\Scriptes\network\command\AbstractCommand.cs" />

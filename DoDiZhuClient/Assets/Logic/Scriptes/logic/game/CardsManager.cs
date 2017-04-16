@@ -21,6 +21,7 @@ public class CardsManager  {
             for(int j = 1;j < 14; j++)
             {
                 allCards[index] =  preStr + ( i * 100 + j);
+                index++;
             }
         }
     }
