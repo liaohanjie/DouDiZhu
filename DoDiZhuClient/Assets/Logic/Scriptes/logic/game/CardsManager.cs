@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 public class CardsManager  {
     private static CardsManager _instance = new CardsManager();
-    private string[] allCards = null;
+    private int[] allCards = null;
+    private int totalCardsCount = 54;
     public static CardsManager Instance()
     {
         return _instance;
@@ -11,16 +12,18 @@ public class CardsManager  {
 
     public void initCards()
     {
-        string preStr = "poker_";
-        allCards = new string[54];
-        allCards[0] = preStr + 0;
-        allCards[1] = preStr + 1;
+  
+        allCards = new int[totalCardsCount];
+        //大小王
+        allCards[0] =  16;
+        allCards[1] =  17;
         int index = 2;
         for (int i = 1;i< 5; i++)
         {
-            for(int j = 1;j < 14; j++)
+            for(int j = 3;j < 16; j++)
             {
-                allCards[index] =  preStr + ( i * 100 + j);
+                int cardsIndex = i * 100 + j;
+                allCards[index] =  cardsIndex;
                 index++;
             }
         }
@@ -37,14 +40,14 @@ public class CardsManager  {
 
             if(first != second)
             {
-                string temp = allCards[first];
+                int temp = allCards[first];
                 allCards[first] = allCards[second];
                 allCards[second] = temp;
             }
         }
     }
 
-    public string[] getAllCards()
+    public int[] getAllCards()
     {
         return allCards;
     }
