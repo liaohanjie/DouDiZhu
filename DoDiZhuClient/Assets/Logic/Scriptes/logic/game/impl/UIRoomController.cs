@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class UIGameController : MonoBehaviour
+public class UIRoomController : MonoBehaviour
 {
     private CardsManager cardsManager = CardsManager.Instance();
-
+    private RoomManager roomManager = RoomManager.Instance();
 
     public UIWidget btnContainer;
+    public UIWidget playerCardContainer;
 
     public Camera playerCamera;
 
@@ -15,10 +16,18 @@ public class UIGameController : MonoBehaviour
     public GameObject centerPokerPos;
     public GameObject downPokerPos;
 
+    private Vector3 origineDownPokerPos;
 
+    //所有牌的Sprite
     private UISprite[] allCardsSprites;
-    private UISprite[] downPlayerCardsSprites;
-   
+
+    private UISprite[] playerCardSprites;
+    //用户手里的牌的对象
+    private List<GameObject> downPlayerCards;
+    //最后剩余的三张牌的对象
+    private List<GameObject> lastCards;
+    
+
 
     public UIAtlas gameUiAtlas = null;
     private bool isMoved;
@@ -30,17 +39,17 @@ public class UIGameController : MonoBehaviour
     int movedIndex = 0;
 
     private int playerCardsSpritesIndex = 0;
-    private PlayerManager playerManager = PlayerManager.getInstance();
+    private const int  SendCardsCount = 51;
     // Use this for initialization
     void Start()
     {
-     
-        allCardsSprites = new UISprite[51];
-        downPlayerCardsSprites = new UISprite[17];
-        cardsManager.initCards();
 
-       
-      
+        allCardsSprites = new UISprite[SendCardsCount];
+        roomManager.initPlayer();
+        downPlayerCards = new List<GameObject>();
+
+
+
     }
 
 
@@ -61,8 +70,12 @@ public class UIGameController : MonoBehaviour
     /// </summary>
     public void InitCardsSprite()
     {
+
+        roomManager.AssignCards();
+        int playerCardCount = roomManager.GetNowPlayerInfo().getCards().Count;
+        playerCardSprites = new UISprite[playerCardCount];
         int[] allCards = cardsManager.getAllCards();
-        PlayerManager.getInstance().sendPlayerCards(allCards);
+        
         Vector3 centerPos = centerPokerPos.transform.position;
         int depth = 100;
         for (int i = allCardsSprites.Length - 1; i >= 0; i--)
@@ -131,7 +144,7 @@ public class UIGameController : MonoBehaviour
 
         if (pos1X != pos2X && pos1Y != pos2Y)
         {
-            float distance = (8f * Time.deltaTime);
+            float distance = (16f * Time.deltaTime);
             allCardsSprites[index].transform.position = Vector3.MoveTowards(allCardsSprites[index].transform.position, toPos, distance);
 
         }
@@ -141,12 +154,11 @@ public class UIGameController : MonoBehaviour
             if (playerIndex == 1)
             {
                 Vector3 v = downPokerPos.transform.position;
-
-                v.x = v.x + 0.16f;
+                v =  SetNextPos(v);
                 downPokerPos.transform.position = v;
-                downPlayerCardsSprites[playerCardsSpritesIndex] = allCardsSprites[index];
+                playerCardSprites[playerCardsSpritesIndex] = allCardsSprites[movedIndex];
                 playerCardsSpritesIndex++;
-              
+                
             } else
             {
                 allCardsSprites[index].gameObject.SetActive(false);
@@ -161,43 +173,118 @@ public class UIGameController : MonoBehaviour
             
         }
     }
+
+    private Vector3 SetNextPos(Vector3 v)
+    {
+        v.x = v.x + 0.14f;
+        return v;
+    }
+
+    /// <summary>
+    /// 根据牌的索引，创建一个牌的GameObject
+    /// </summary>
+    /// <param name="cardIndex"></param>
+    /// <returns></returns>
+    private GameObject AddCardGameObject(int cardIndex,string cardName,int depth)
+    {
+        GameObject cardSprites = Resources.Load("Card") as GameObject;
+        cardSprites = NGUITools.AddChild(playerCardContainer.gameObject, cardSprites);
+        UISprite uisrite = cardSprites.GetComponent<UISprite>();
+        uisrite.spriteName = cardName;
+        cardSprites.transform.Rotate(new Vector3(0, 0, 90));
+        cardSprites.transform.localScale = new Vector3(1, 0.6f, 1);
+        uisrite.depth = depth;
+
+        MyCardProperty cardProperty = cardSprites.GetComponent<MyCardProperty>();
+        cardProperty.CardIndex = cardIndex;
+
+        return cardSprites;
+    }
     /// <summary>
     /// 显示玩家的牌
     /// </summary>
     private void showPlayerCards()
     {
-        PlayerInfo playerInfo = playerManager.getNowPlayerInfo();
+        PlayerInfo playerInfo = roomManager.GetNowPlayerInfo();
         List<int> cards = playerInfo.getCards();
         cards.Sort((x,y)=> {
             return y % 100 - x % 100;
         });
-        
-        int depth = 9;
+        int depth = 10;
         for (int i = 0; i < cards.Count; i++)
         {
             string cardName = pokerPre + cards[i];
-            GameLog.debug(cardName);
-            UISprite cardSprite = NGUITools.AddSprite(centerPokerPos.gameObject, gameUiAtlas, cardName);
-            UISprite posSprite = downPlayerCardsSprites[i];
+          
+          
+            GameObject cardsGameObject = this.AddCardGameObject(cards[i],cardName,depth);
+
+            downPlayerCards.Add(cardsGameObject);
+
+            UISprite posSprite = playerCardSprites[i];
             Vector3 pos = posSprite.transform.position;
             posSprite.gameObject.SetActive(false);
-            cardSprite.transform.position = pos;
-            cardSprite.transform.Rotate(new Vector3(0, 0, 90));
-            cardSprite.transform.localScale = new Vector3(1, 0.8f, 1);
-            cardSprite.depth = depth;
+            cardsGameObject.transform.position = pos;
             depth++;
+
         }
     }
-
-
+    /// <summary>
+    /// 刷新牌的位置
+    /// </summary>
+    public void RefreshPlayerCardsPos()
+    {
+        Vector3 v = origineDownPokerPos ;
+       
+        foreach(GameObject go in downPlayerCards){
+            if(go != null)
+            {
+                MyCardProperty cardProperty = go.GetComponent<MyCardProperty>();
+                cardProperty.setOriginePos(v);
+                go.transform.position = v;
+                v =  SetNextPos(v);
+            }
+           
+        }
+    }
 
 
     public void OnReadyGameBtnClick()
     {
         readyGameBtn.gameObject.SetActive(false);
         btnContainer.gameObject.SetActive(true);
-        cardsManager.RefreshCards();
+      
         InitCardsSprite();
+        origineDownPokerPos = downPokerPos.transform.position;
+        
     }
+
+
+
+    public void PlayerCards()
+    {
+        List<GameObject> selectedCarads = GameCardsManager.Instance().getSelectCards();
+        GameCardsManager gameManager = GameCardsManager.Instance();
+        if(selectedCarads.Count > 0)
+        {
+            PlayerInfo playerinfo = RoomManager.Instance().GetNowPlayerInfo();
+            int depth = 9;
+            foreach (GameObject cards in selectedCarads)
+            {
+                cards.transform.position = centerPokerPos.transform.position;
+
+                MyCardProperty cardProperty = cards.GetComponent<MyCardProperty>();
+                int removeCard = cardProperty.CardIndex;
+                playerinfo.removeCard(removeCard);
+                downPlayerCards.Remove(cards);
+                cards.GetComponent<UISprite>().depth = depth;
+                depth++;
+            }
+            this.RefreshPlayerCardsPos();
+        }
+
+    }
+
+
+
 
 }

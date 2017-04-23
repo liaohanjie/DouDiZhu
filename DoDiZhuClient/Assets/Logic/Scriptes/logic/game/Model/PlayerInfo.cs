@@ -7,7 +7,12 @@ public class PlayerInfo  {
     private int playerPos;
     //玩家有里的牌
     private List<int> playerCards;
+   
 
+    public int CurrentPlayCardIndex
+    {
+        get;set;
+    }
     public long PlayerId {
         get {
             return playerId;
@@ -29,6 +34,11 @@ public class PlayerInfo  {
         playerCards.Add(cards);
     }
 
+    public void removeCard(int cardIndex)
+    {
+        playerCards.Remove(cardIndex);
+    }
+
     public int getCardsCount()
     {
         return playerCards.Count;
@@ -38,5 +48,11 @@ public class PlayerInfo  {
     {
         return playerCards;
     }
+
+    public int getPlayerPos()
+    {
+        return playerPos;
+    }
+    
 
 }
