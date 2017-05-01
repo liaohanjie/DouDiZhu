@@ -10,7 +10,7 @@ public class CardsManager  {
         return _instance;
     }
 
-    public void initCards()
+    private void initCards()
     {
   
         allCards = new int[totalCardsCount];
@@ -31,7 +31,7 @@ public class CardsManager  {
     /// <summary>
     /// 洗牌,随机一百次，每次随机两个索引数，并交换它们对应的值的位置
     /// </summary>
-    public void RefreshCards()
+    private void RefreshCards()
     {
         for(int i = 0;i < 100; i++)
         {
@@ -43,6 +43,29 @@ public class CardsManager  {
                 int temp = allCards[first];
                 allCards[first] = allCards[second];
                 allCards[second] = temp;
+            }
+        }
+    }
+
+    public void SendCards()
+    {
+        initCards();
+        RefreshCards();
+        int playerIndex = 0;
+        PlayerInfo[] playerInfos = PlayerManager.Instance.getPlayerInfos();
+        int count = 0;
+        foreach (int cardIndex in allCards)
+        {
+            playerInfos[playerIndex].addCard( cardIndex);
+            playerIndex++;
+            if(playerIndex >= playerInfos.Length)
+            {
+                playerIndex = 0;
+            }
+            count++;
+            if(count == 51)
+            {
+                break;
             }
         }
     }
