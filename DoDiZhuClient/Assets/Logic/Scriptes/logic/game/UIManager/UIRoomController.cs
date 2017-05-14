@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class UIRoomController : MonoBehaviour {
 
+    public static UIRoomController Instance;
     public GameObject leftHeadPos;
     public GameObject rightHeadPos;
     public GameObject bottomHeadPos;
@@ -25,10 +26,11 @@ public class UIRoomController : MonoBehaviour {
     private bool isMoved = false;
     private int playerIndex = 1;
     private int playerCardsSpritesIndex = 0;
-
+    
 
     // Use this for initialization
     void Start () {
+        Instance = this;
         PlayerManager.Instance.RandomPlayer();
         initPlayerInfo();
 	}
@@ -57,10 +59,12 @@ public class UIRoomController : MonoBehaviour {
         int pos = playerInfo.PlayerPos;
         GameLog.debug(playerInfo.PlayerPos.ToString());
         GameObject posGameObj = null;
+        UIPlayerInfo uiPlayerInfo = UIPlayerManager.getInstsance().getUIPlayerInfo(playerInfo.PlayerId); ;
         switch (pos)
         {
             case 1:
                 posGameObj = bottomHeadPos;
+               
                 break;
             case 2:
                 posGameObj = rightHeadPos;
@@ -76,6 +80,8 @@ public class UIRoomController : MonoBehaviour {
         nameLabel.text = playerInfo.PlayerName;
         headSprite.transform.position = posGameObj.transform.position;
         headSprite.name = playerInfo.Icon;
+        uiPlayerInfo.HeadSprite = headSprite;
+       
 
     }
     public void initCardsSprites()
@@ -143,7 +149,7 @@ public class UIRoomController : MonoBehaviour {
             isMoved = false;
             MovedLastCards();
             showPlayerCards();
-            GameButtonController.Instance.SelectDiZhu();
+            GameButtonController.Instance.SelectTheFirstCallScore();
             return;
         }
 
@@ -227,9 +233,12 @@ public class UIRoomController : MonoBehaviour {
         initCardsSprites();
         isMoved = true;
         readyButton.gameObject.SetActive(false);
-       // buttonContainer.gameObject.SetActive(true);
+      
     }
-
+    public void showButtonContainer()
+    {
+        buttonContainer.gameObject.SetActive(true);
+    }
     /// <summary>
     /// 显示玩家的牌
     /// </summary>
@@ -277,5 +286,37 @@ public class UIRoomController : MonoBehaviour {
         cardProperty.CardIndex = cardIndex;
 
         return cardSprites;
+    }
+
+    public void setPlayerTips(long playerId,string tipsContent)
+    {
+        UIPlayerInfo uiPlayerInfo = UIPlayerManager.getInstsance().getUIPlayerInfo(playerId);
+        UISprite headSprite = uiPlayerInfo.HeadSprite;
+        UILabel tipLabel = headSprite.transform.Find("TipsLabel").GetComponent<UILabel>();
+        tipLabel.text = tipsContent;
+    }
+    /// <summary>
+    /// 显示地主片
+    /// </summary>
+    public void showDiZhuCard()
+    {
+        int[] cards = CardsManager.Instance().getDiZhuCard();
+        int depth = 2;
+        for (int i = 0; i < cards.Length; i++)
+        {
+            string cardName = pokerPre + cards[i];
+
+
+            GameObject cardsGameObject = this.AddCardGameObject(cards[i], cardName, depth);
+
+            playerCardsGameObjList.Add(cardsGameObject);
+
+            UISprite posSprite = allCardsSprites[allCardsSprites.Length - 1 -i];
+            Vector3 pos = posSprite.transform.position;
+            posSprite.gameObject.SetActive(false);
+            cardsGameObject.transform.position = pos;
+            depth++;
+
+        }
     }
 }

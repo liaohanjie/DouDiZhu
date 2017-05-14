@@ -168,7 +168,9 @@
     <Compile Include="Assets\Logic\Scriptes\logic\game\Model\CardInfo.cs" />
     <Compile Include="Assets\Logic\Scriptes\logic\game\Model\PlayerInfo.cs" />
     <Compile Include="Assets\Logic\Scriptes\logic\game\PlayerManager.cs" />
-    <Compile Include="Assets\Logic\Scriptes\logic\game\UIRoomController.cs" />
+    <Compile Include="Assets\Logic\Scriptes\logic\game\UIManager\Model\UIPlayerInfo.cs" />
+    <Compile Include="Assets\Logic\Scriptes\logic\game\UIManager\UIPlayerManager.cs" />
+    <Compile Include="Assets\Logic\Scriptes\logic\game\UIManager\UIRoomController.cs" />
     <Compile Include="Assets\Logic\Scriptes\logic\main\StartController.cs" />
     <Compile Include="Assets\Logic\Scriptes\network\command\AbstractCommand.cs" />
     <Compile Include="Assets\Logic\Scriptes\network\command\CommandHead.cs" />

@@ -75,6 +75,15 @@ public class CardsManager  {
         return allCards;
     }
 
+    public int[] getDiZhuCard()
+    {
+        int[] cards = new int[3];
+        cards[0] = allCards[53];
+        cards[1] = allCards[52];
+        cards[2] = allCards[51];
+        return cards;
+    }
+
 
 	
 }

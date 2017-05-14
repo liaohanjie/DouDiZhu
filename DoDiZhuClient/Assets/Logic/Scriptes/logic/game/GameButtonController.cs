@@ -72,43 +72,77 @@ public class GameButtonController : MonoBehaviour{
     public void OnOneScordButtonClick()
     {
         scord = 1;
+        selectScordContainer.gameObject.SetActive(false);
+        RandomDiDun();
+        
     }
 
     public void OnSecondScordButtonClick()
     {
         scord = 2;
+        selectScordContainer.gameObject.SetActive(false);
+        RandomDiDun();
+
     }
 
     public void OnThreeScordButtonClick()
     {
         scord = 3;
+        dizhuPlayerId = PlayerManager.Instance.getPlayerInfoByPos(1).PlayerId;
+        selectScordContainer.gameObject.SetActive(false);
+        UIRoomController.Instance.showDiZhuCard();
+        SendDiZhuCards(dizhuPlayerId);
+        UIRoomController.Instance.showButtonContainer();
+      
+    }
+    /// <summary>
+    /// 地主确定后，把地主牌发给相应的人
+    /// </summary>
+    private void SendDiZhuCards(long playerId)
+    {
+        PlayerInfo playerInfo = PlayerManager.Instance.getPlayerInfo(playerId);
+        int playerPos = playerInfo.PlayerPos;
+        if(playerPos == 1)
+        {
+
+        }
     }
 
-    public void SelectDiZhu()
+   
+  
+    /// <summary>
+    /// 选择谁第一个叫分
+    /// </summary>
+    public void SelectTheFirstCallScore()
     {
         int randomFirst = Random.Range(1,3);
       
         if(randomFirst == 1)
         {
             selectScordContainer.gameObject.SetActive(true);
+
         } else
         {
-            for(int i = 2;i <= 3; i++)
-            {
-                int randomScord = Random.Range(1,3);
-               
-                if(randomScord == 3)
-                {
-                    scord = 3;
-                    dizhuPlayerId = PlayerManager.Instance.getPlayerInfoByPos(i).PlayerId;
-                    GameLog.debug("自动选择地主：" + dizhuPlayerId);
-                }
-            }
+            RandomDiDun();
         }
-        if(scord == 0)
+       
+        if (scord == 0)
         {
             selectScordContainer.gameObject.SetActive(true);
         }
     }
+    /// <summary>
+    /// 随机找一个地主
+    /// </summary>
+    private void RandomDiDun()
+    {
+        //从其它两个玩家中选择一个地主
+        int randomFirst = Random.Range(2, 3);
+        scord = 3;
+        dizhuPlayerId = PlayerManager.Instance.getPlayerInfoByPos(randomFirst).PlayerId;
+        UIRoomController.Instance.showDiZhuCard();
+    }
+
+
 
 }
