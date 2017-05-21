@@ -9,9 +9,12 @@ public class UIRoomController : MonoBehaviour {
     public GameObject bottomHeadPos;
     public GameObject centerPokerPos;
     public GameObject playerCardsPos;
+    
+
     public UIWidget roomContainer;
     public UIWidget buttonContainer;
     public UIAtlas gameUiAtlas;
+    public UIAtlas publicAtlas;
     public UIButton readyButton;
     public Camera playerCamera;
     private UISprite[] allCardsSprites = new UISprite[54];
@@ -26,13 +29,16 @@ public class UIRoomController : MonoBehaviour {
     private bool isMoved = false;
     private int playerIndex = 1;
     private int playerCardsSpritesIndex = 0;
-    
+
+
+    private UISprite[] dizhuCardsSprites;
 
     // Use this for initialization
     void Start () {
         Instance = this;
         PlayerManager.Instance.RandomPlayer();
         initPlayerInfo();
+        dizhuCardsSprites = new UISprite[3];
 	}
 	
 	// Update is called once per frame
@@ -42,6 +48,11 @@ public class UIRoomController : MonoBehaviour {
             sendCardsAnimation();
         }
 	}
+
+    public UIAtlas getPublicAtlas()
+    {
+        return publicAtlas;
+    }
     /// <summary>
     /// 初始化登陆用户信息
     /// </summary>
@@ -81,6 +92,8 @@ public class UIRoomController : MonoBehaviour {
         headSprite.transform.position = posGameObj.transform.position;
         headSprite.name = playerInfo.Icon;
         uiPlayerInfo.HeadSprite = headSprite;
+        headSprite.depth = 102;
+
        
 
     }
@@ -316,7 +329,15 @@ public class UIRoomController : MonoBehaviour {
             posSprite.gameObject.SetActive(false);
             cardsGameObject.transform.position = pos;
             depth++;
+            dizhuCardsSprites[i] = cardsGameObject.GetComponent<UISprite>();
 
         }
+    }
+    /// <summary>
+    /// 移动地主牌
+    /// </summary>
+    public void MoveDizhuCardsSprites()
+    {
+        MoveDizhuCard.Instance.SetDizhuCardsSprites(dizhuCardsSprites);
     }
 }

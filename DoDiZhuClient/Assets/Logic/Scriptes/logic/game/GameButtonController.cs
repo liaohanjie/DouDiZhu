@@ -17,6 +17,7 @@ public class GameButtonController : MonoBehaviour{
     {
         Instance = this;
     }
+
     public void addSeletedCards(GameObject cardsObject)
     {
         seletedCards.Add(cardsObject);
@@ -90,10 +91,22 @@ public class GameButtonController : MonoBehaviour{
         scord = 3;
         dizhuPlayerId = PlayerManager.Instance.getPlayerInfoByPos(1).PlayerId;
         selectScordContainer.gameObject.SetActive(false);
+        
+       
+        UIRoomController.Instance.showButtonContainer();
+        AfterSureDiZhu(dizhuPlayerId);
+       
+      
+    }
+
+    public void AfterSureDiZhu(long dizhuPlayerId)
+    {
         UIRoomController.Instance.showDiZhuCard();
         SendDiZhuCards(dizhuPlayerId);
-        UIRoomController.Instance.showButtonContainer();
-      
+
+        UIPlayerManager.getInstsance().setDiZhuIcon(dizhuPlayerId);
+        UIPlayerManager.getInstsance().setPeasantIcon(dizhuPlayerId);
+        UIRoomController.Instance.MoveDizhuCardsSprites();
     }
     /// <summary>
     /// 地主确定后，把地主牌发给相应的人
@@ -140,7 +153,8 @@ public class GameButtonController : MonoBehaviour{
         int randomFirst = Random.Range(2, 3);
         scord = 3;
         dizhuPlayerId = PlayerManager.Instance.getPlayerInfoByPos(randomFirst).PlayerId;
-        UIRoomController.Instance.showDiZhuCard();
+        AfterSureDiZhu(dizhuPlayerId);
+
     }
 
 
