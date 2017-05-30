@@ -162,7 +162,7 @@ public class UIRoomController : MonoBehaviour {
             isMoved = false;
             MovedLastCards();
             showPlayerCards();
-            GameButtonController.Instance.SelectTheFirstCallScore();
+         
             return;
         }
 
