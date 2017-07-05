@@ -2,13 +2,46 @@
 using System.Collections.Generic;
 
 public class RoomManager  {
-
+    private static RoomManager rootManager = new RoomManager();
     private PlayerPlayInfo player1;
     private PlayerPlayInfo player2;
     private PlayerPlayInfo player3;
 
     private PlayCommonInfo playCommonInfo;
 
+    public PlayerPlayInfo Player1
+    {
+        get
+        {
+            return player1;
+        }
+
+    }
+
+    public PlayerPlayInfo Player2
+    {
+        get
+        {
+            return player2;
+        }
+
+       
+    }
+
+    public PlayerPlayInfo Player3
+    {
+        get
+        {
+            return player3;
+        }
+
+        
+    }
+
+    public static RoomManager Instance()
+    {
+        return rootManager;
+    }
     public void ResetRoom()
     {
         player1 = null;
@@ -22,23 +55,35 @@ public class RoomManager  {
     /// <param name="player"></param>
     public void AddPlayer(Player player)
     {
-        if(player1 == null)
+        if(Player1 == null)
         {
             player1 = new PlayerPlayInfo();
-            player1.Player = player;
+            Player1.Player = player;
             player1.Pos = 1;
-        } else if(player2 == null)
+        } else if(Player2 == null)
         {
             player2 = new PlayerPlayInfo();
             player2.Player = player;
             player2.Pos = 2;
-        } else if(player3 == null)
+        } else if(Player3 == null)
         {
             player3 = new PlayerPlayInfo();
             player3.Player = player;
             player3.Pos = 3;
         }
 
+    }
+
+    public void InitPlayer()
+    {
+        for(int i = 1;i<= 3; i++)
+        {
+            Player player = new Player();
+            player.PlayerId = i;
+            player.PlayerName = "Player" + i;
+            player.PlayerIcon = "gameHead";
+            AddPlayer(player);
+        }
     }
     /// <summary>
     /// 给房间中的用户发牌
@@ -55,13 +100,13 @@ public class RoomManager  {
         {
             if(playerIndex == 1)
             {
-                player1.Cards.Add(cardIndex);
+                Player1.Cards.Add(cardIndex);
             } else if(playerIndex == 2)
             {
-                player2.Cards.Add(cardIndex);
+                Player2.Cards.Add(cardIndex);
             } else if(playerIndex == 3)
             {
-                player2.Cards.Add(cardIndex);
+                Player2.Cards.Add(cardIndex);
                 playerIndex = 1;
             }
             playerIndex++;
@@ -96,13 +141,13 @@ public class RoomManager  {
     {
        if(pos == 1)
         {
-            player1.IsDiZhu = true;
+            Player1.IsDiZhu = true;
         } else if(pos == 2)
         {
-            player2.IsDiZhu = true;
+            Player2.IsDiZhu = true;
         } else if(pos == 3)
         {
-            player3.IsDiZhu = true;
+            Player3.IsDiZhu = true;
         } else {
             NGUIDebug.Log("不存在的位置类型：" + pos);
         }

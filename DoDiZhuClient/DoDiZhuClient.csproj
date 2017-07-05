@@ -221,6 +221,8 @@
     <Compile Include="Assets\Scripts\Model\PlayCommonInfo.cs" />
     <Compile Include="Assets\Scripts\Model\Player.cs" />
     <Compile Include="Assets\Scripts\Model\PlayerPlayerInfo.cs" />
+    <Compile Include="Assets\Scripts\UIManager\PlayerShow.cs" />
+    <Compile Include="Assets\Scripts\UIManager\ReadyPlay.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
